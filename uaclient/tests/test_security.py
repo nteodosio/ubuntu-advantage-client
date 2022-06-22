@@ -324,7 +324,7 @@ class TestCVE:
             textwrap.dedent(
                 """\
                 CVE-2020-1472: Samba vulnerability
-                https://ubuntu.com/security/CVE-2020-1472"""
+                 - https://ubuntu.com/security/CVE-2020-1472"""
             )
             == cve.get_url_header()
         )
@@ -522,8 +522,8 @@ class TestUSN:
                     """\
                     USN-4510-2: Samba vulnerability
                     Found CVEs:
-                    https://ubuntu.com/security/CVE-2020-1473
-                    https://ubuntu.com/security/CVE-2020-1472"""
+                     - https://ubuntu.com/security/CVE-2020-1473
+                     - https://ubuntu.com/security/CVE-2020-1472"""
                 ),
             ),
             (
@@ -534,22 +534,22 @@ class TestUSN:
                 """\
 USN-4510-2: Samba vulnerability
 Found CVEs:
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472
-https://ubuntu.com/security/CVE-2020-1473
-https://ubuntu.com/security/CVE-2020-1472""",
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472
+ - https://ubuntu.com/security/CVE-2020-1473
+ - https://ubuntu.com/security/CVE-2020-1472""",
             ),
             (
                 SAMPLE_USN_RESPONSE_NO_CVES,
@@ -557,7 +557,7 @@ https://ubuntu.com/security/CVE-2020-1472""",
                     """\
                     USN-4038-3: USN vulnerability
                     Found Launchpad bugs:
-                    https://launchpad.net/bugs/1834494"""
+                     - https://launchpad.net/bugs/1834494"""
                 ),
             ),
         ),
@@ -1015,6 +1015,7 @@ class TestPromptForAffectedPackages:
                 textwrap.dedent(
                     """\
                     No affected source packages are installed.
+
                     {check} USN-### does not affect your system.
                     """.format(
                         check=OKGREEN_CHECK  # noqa: E126
@@ -1033,6 +1034,7 @@ class TestPromptForAffectedPackages:
                     (1/1) slsrc:
                     A fix is available in Ubuntu standard updates.
                     The update is already installed.
+
                     {check} USN-### is resolved.
                     """.format(
                         check=OKGREEN_CHECK  # noqa: E126
@@ -1055,7 +1057,7 @@ class TestPromptForAffectedPackages:
                 + colorize_commands(
                     [["apt update && apt install --only-upgrade" " -y sl"]]
                 )
-                + "\n"
+                + "\n\n"
                 + "{check} USN-### is resolved.\n".format(check=OKGREEN_CHECK),
                 FixStatus.SYSTEM_NON_VULNERABLE,
             ),
@@ -1081,6 +1083,7 @@ class TestPromptForAffectedPackages:
                                 ]
                             ]
                         ),
+                        "",
                         "{check} USN-### is resolved.\n".format(
                             check=OKGREEN_CHECK
                         ),
@@ -1166,7 +1169,7 @@ class TestPromptForAffectedPackages:
                         SECURITY_UPDATE_NOT_INSTALLED_SUBSCRIPTION,
                     ]
                 )
-                + "\n"
+                + "\n\n"
                 + "1 package is still affected: slsrc",
                 FixStatus.SYSTEM_STILL_VULNERABLE,
             ),
@@ -1255,7 +1258,7 @@ class TestPromptForAffectedPackages:
                         SECURITY_UPDATE_NOT_INSTALLED_SUBSCRIPTION,
                     ]
                 )
-                + "\n"
+                + "\n\n"
                 + "13 packages are still affected: {}".format(
                     (
                         "pkg1, pkg12, pkg13, pkg14, pkg15, pkg2, pkg3,\n"
@@ -1295,6 +1298,7 @@ class TestPromptForAffectedPackages:
                     "pkg1, pkg2, pkg3, pkg4, pkg5, pkg6,\n"
                     "    pkg7, pkg8, pkg9"
                 )
+                + "\n"
                 + "9 packages are still affected: {}".format(
                     "pkg1, pkg2, pkg3, pkg4, pkg5, pkg6, pkg7, pkg8,\n"
                     "    pkg9"
@@ -1362,7 +1366,7 @@ A fix is available in Ubuntu standard updates.\n"""
                         ]
                     ]
                 )
-                + "\n"
+                + "\n\n"
                 + "{check} USN-### is resolved.\n".format(check=OKGREEN_CHECK),
                 FixStatus.SYSTEM_NON_VULNERABLE,
             ),
@@ -1472,7 +1476,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + colorize_commands(
                     [["apt update && apt install --only-upgrade" " -y pkg1"]]
                 )
-                + "\n"
+                + "\n\n"
                 + "{check} USN-### is resolved.\n".format(check=OKGREEN_CHECK),
             ),
         ),
@@ -1564,6 +1568,7 @@ A fix is available in Ubuntu standard updates.\n"""
                     A fix is available in Ubuntu standard updates.
                     """
                 )
+                + "\n"
                 + "3 packages are still affected: pkg1, pkg2, pkg3"
                 + "\n"
                 + "{check} USN-### is not resolved.\n".format(check=FAIL_X),
@@ -1635,7 +1640,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + colorize_commands([["ua attach token"]])
                 + "\n"
                 + SECURITY_UA_SERVICE_NOT_ENTITLED.format(service="esm-infra")
-                + "\n"
+                + "\n\n"
                 + "1 package is still affected: pkg1"
                 + "\n"
                 + "{check} USN-### is not resolved.\n".format(check=FAIL_X),
@@ -1732,7 +1737,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + colorize_commands(
                     [["apt update && apt install --only-upgrade" " -y pkg1"]]
                 )
-                + "\n"
+                + "\n\n"
                 + "{check} USN-### is resolved.\n".format(check=OKGREEN_CHECK),
             ),
         ),
@@ -1824,7 +1829,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + SECURITY_SERVICE_DISABLED.format(service="esm-infra")
                 + "\n"
                 + SECURITY_UA_SERVICE_NOT_ENABLED.format(service="esm-infra")
-                + "\n"
+                + "\n\n"
                 + "1 package is still affected: pkg1"
                 + "\n"
                 + "{check} USN-### is not resolved.\n".format(check=FAIL_X),
@@ -1922,7 +1927,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + colorize_commands(
                     [["apt update && apt install --only-upgrade" " -y pkg1"]]
                 )
-                + "\n"
+                + "\n\n"
                 + "{check} USN-### is resolved.\n".format(check=OKGREEN_CHECK),
             ),
         ),
@@ -2003,7 +2008,7 @@ A fix is available in Ubuntu standard updates.\n"""
                     """
                 )
                 + SECURITY_UPDATE_NOT_INSTALLED_EXPIRED
-                + "\n"
+                + "\n\n"
                 + "1 package is still affected: pkg1"
                 + "\n"
                 + "{check} USN-### is not resolved.\n".format(check=FAIL_X),
@@ -2077,7 +2082,7 @@ A fix is available in Ubuntu standard updates.\n"""
                 + colorize_commands(
                     [["apt update && apt install --only-upgrade" " -y pkg1"]]
                 )
-                + "\n"
+                + "\n\n"
                 + "A reboot is required to complete fix operation."
                 + "\n"
                 + "{check} USN-### is not resolved.\n".format(check=FAIL_X),
@@ -2148,6 +2153,7 @@ A fix is available in Ubuntu standard updates.\n"""
                     (1/1) slsrc:
                     A fix is available in Ubuntu standard updates.
                     The update is already installed.
+
                     {check} USN-### is resolved.
                     """.format(
                         check=OKGREEN_CHECK  # noqa: E126
