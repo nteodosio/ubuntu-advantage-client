@@ -98,7 +98,9 @@ class DataObjectFile(Generic[DOFType]):
         parsed_data = None
         if self.file_format == DataObjectFileFormat.JSON:
             try:
-                parsed_data = json.loads(raw_data)
+                parsed_data = json.loads(
+                    raw_data, cls=util.DatetimeAwareJSONDecoder
+                )
             except json.JSONDecodeError:
                 raise exceptions.InvalidFileFormatError(
                     self.ua_file.path, "json"

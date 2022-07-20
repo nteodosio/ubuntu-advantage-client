@@ -129,6 +129,9 @@ class TestColorizeCommands:
         assert colorize_commands(commands) == expected
 
 
+@mock.patch(
+    "uaclient.entitlements.livepatch.on_supported_kernel", return_value=None
+)
 class TestFormatTabular:
     @pytest.mark.parametrize(
         "support_level,expected_colour,istty",
@@ -150,6 +153,7 @@ class TestFormatTabular:
     def test_support_colouring(
         self,
         m_isatty,
+        m_on_supported_kernel,
         support_level,
         expected_colour,
         istty,
@@ -168,7 +172,9 @@ class TestFormatTabular:
         assert expected_string in tabular_output
 
     @pytest.mark.parametrize("origin", ["free", "not-free"])
-    def test_header_alignment(self, origin, status_dict_attached):
+    def test_header_alignment(
+        self, m_on_supported_kernel, origin, status_dict_attached
+    ):
         status_dict_attached["origin"] = origin
         tabular_output = format_tabular(status_dict_attached)
         colon_idx = None
@@ -191,7 +197,11 @@ class TestFormatTabular:
         ],
     )
     def test_correct_header_keys_included(
-        self, origin, expected_headers, status_dict_attached
+        self,
+        m_on_supported_kernel,
+        origin,
+        expected_headers,
+        status_dict_attached,
     ):
         status_dict_attached["origin"] = origin
 
@@ -209,7 +219,9 @@ class TestFormatTabular:
         ]
         assert list(expected_headers) == headers
 
-    def test_correct_unattached_column_alignment(self, status_dict_unattached):
+    def test_correct_unattached_column_alignment(
+        self, m_on_supported_kernel, status_dict_unattached
+    ):
         tabular_output = format_tabular(status_dict_unattached)
         [header, eal_service_line] = [
             line
@@ -224,7 +236,11 @@ class TestFormatTabular:
 
     @pytest.mark.parametrize("attached", [True, False])
     def test_no_leading_newline(
-        self, attached, status_dict_attached, status_dict_unattached
+        self,
+        m_on_supported_kernel,
+        attached,
+        status_dict_attached,
+        status_dict_unattached,
     ):
         if attached:
             status_dict = status_dict_attached
@@ -242,7 +258,12 @@ class TestFormatTabular:
         ),
     )
     def test_custom_descr(
-        self, description_override, uf_status, uf_descr, status_dict_attached
+        self,
+        m_on_supported_kernel,
+        description_override,
+        uf_status,
+        uf_descr,
+        status_dict_attached,
     ):
         """Services can provide a custom call to action if present."""
         default_descr = "Common Criteria EAL2 default descr"
@@ -272,6 +293,9 @@ def ros_desc(FakeConfig):
     return entitlement_factory(cfg=FakeConfig(), name="ros").description
 
 
+@mock.patch(
+    "uaclient.entitlements.livepatch.on_supported_kernel", return_value=None
+)
 @mock.patch("uaclient.files.NoticeFile.remove")
 @mock.patch("uaclient.system.should_reboot", return_value=False)
 class TestStatus:
@@ -299,6 +323,7 @@ class TestStatus:
         m_get_available_resources,
         _m_should_reboot,
         m_remove_notice,
+        m_on_supported_kernel,
         ros_desc,
         esm_desc,
         show_all,
@@ -311,11 +336,13 @@ class TestStatus:
                     "available": "yes",
                     "name": "esm-infra",
                     "description": esm_desc,
+                    "description_override": None,
                 },
                 {
                     "available": "no",
                     "name": "ros",
                     "description": ros_desc,
+                    "description_override": None,
                 },
             ]
         else:
@@ -324,6 +351,7 @@ class TestStatus:
                     "available": "yes",
                     "name": "esm-infra",
                     "description": esm_desc,
+                    "description_override": None,
                 }
             ]
         cfg = FakeConfig()
@@ -394,6 +422,7 @@ class TestStatus:
         _m_livepatch_status,
         _m_should_reboot,
         _m_remove_notice,
+        m_on_supported_kernel,
         avail_res,
         entitled_res,
         uf_entitled,
@@ -493,6 +522,7 @@ class TestStatus:
                 "description_override": None,
                 "available": mock.ANY,
                 "blocked_by": [],
+                "warning": None,
             }
             for cls in ENTITLEMENT_CLASSES
         ]
@@ -552,6 +582,7 @@ class TestStatus:
         m_get_available_resources,
         _m_should_reboot,
         _m_remove_notice,
+        m_on_supported_kernel,
         FakeConfig,
     ):
         m_get_available_resources.return_value = [
@@ -571,6 +602,7 @@ class TestStatus:
         m_get_available_resources,
         _m_should_reboot,
         _m_remove_notice,
+        m_on_supported_kernel,
         FakeConfig,
     ):
         root_cfg = FakeConfig.for_attached_machine()
@@ -585,6 +617,7 @@ class TestStatus:
         _m_get_available_resources,
         _m_should_reboot,
         m_remove_notice,
+        m_on_supported_kernel,
         FakeConfig,
     ):
         cfg = FakeConfig()
@@ -649,6 +682,7 @@ class TestStatus:
         _m_fips_status,
         _m_should_reboot,
         m_remove_notice,
+        m_on_supported_kernel,
         all_resources_available,
         entitlements,
         features_override,
@@ -762,6 +796,7 @@ class TestStatus:
                     "description_override": None,
                     "available": mock.ANY,
                     "blocked_by": [],
+                    "warning": None,
                 }
             )
         with mock.patch(
@@ -798,6 +833,7 @@ class TestStatus:
         _m_get_available_resources,
         _m_should_reboot,
         _m_remove_notice,
+        m_on_supported_kernel,
         all_resources_available,
         FakeConfig,
     ):
@@ -846,6 +882,7 @@ class TestStatus:
         _m_get_available_resources,
         _m_should_reboot,
         m_remove_notice,
+        m_on_supported_kernel,
         FakeConfig,
     ):
 
