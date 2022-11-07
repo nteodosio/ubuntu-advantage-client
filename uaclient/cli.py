@@ -55,6 +55,8 @@ from uaclient.entitlements.entitlement_status import (
     CanEnableFailure,
     CanEnableFailureReason,
 )
+from uaclient.files import notices
+from uaclient.files.notices import Notice
 from uaclient.jobs.update_messaging import (
     clear_apt_news_flag,
     refresh_motd,
@@ -1612,7 +1614,7 @@ def get_parser(cfg: config.UAConfig):
     return parser
 
 
-def action_status(args, *, cfg):
+def action_status(args, *, cfg: config.UAConfig):
     if not cfg:
         cfg = config.UAConfig()
     show_all = args.all if args else False
@@ -1621,12 +1623,14 @@ def action_status(args, *, cfg):
     if cfg.is_attached:
         try:
             if contract.is_contract_changed(cfg):
-                cfg.notice_file.try_add(
-                    "", messages.NOTICE_REFRESH_CONTRACT_WARNING
+                notices.add(
+                    cfg.root_mode,
+                    Notice.CONTRACT_REFRESH_WARNING,
                 )
             else:
-                cfg.notice_file.try_remove(
-                    "", messages.NOTICE_REFRESH_CONTRACT_WARNING
+                notices.remove(
+                    cfg.root_mode,
+                    Notice.CONTRACT_REFRESH_WARNING,
                 )
         except exceptions.UrlError as e:
             with util.disable_log_to_console():
@@ -1723,7 +1727,7 @@ def action_refresh(args, *, cfg: config.UAConfig):
 
     if args.target is None or args.target == "contract":
         _action_refresh_contract(args, cfg)
-        cfg.notice_file.remove("", messages.NOTICE_REFRESH_CONTRACT_WARNING)
+        notices.remove(cfg.root_mode, Notice.CONTRACT_REFRESH_WARNING)
 
     if args.target is None or args.target == "messages":
         _action_refresh_messages(args, cfg)
