@@ -181,3 +181,31 @@ Feature: Attached status
         Examples: ubuntu release
            | release |
            | jammy   |
+
+    @series.kinetic
+    @uses.config.machine_type.lxd.container
+    Scenario Outline: Attached status in a non-LTS ubuntu machine
+        Given a `<release>` machine with ubuntu-advantage-tools installed
+        When I run `pro status` as non-root
+        Then I will see the following on stdout
+        """
+        Ubuntu Pro does not provide support for non-LTS releases.
+        You can still attach to guarantee support when upgrading to a LTS release
+        """
+        When I attach `contract_token` with sudo
+        And I run `pro status` as non-root
+        Then stdout matches regexp:
+        """
+        Ubuntu Pro does not provide support for non-LTS releases.
+        Your machine is attached and will be granted support when running a LTS release
+        """
+        And I run `pro status --all` as non-root
+        Then stdout matches regexp:
+        """
+        Ubuntu Pro does not provide support for non-LTS releases.
+        Your machine is attached and will be granted support when running a LTS release
+        """
+
+        Examples: ubuntu release
+           | release |
+           | jammy   |
