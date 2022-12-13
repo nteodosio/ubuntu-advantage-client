@@ -160,7 +160,7 @@ result = wait(options)
 
 - `ConnectivityError`: raised if it is not possible to connect to the Contracts Server
 - `ContractAPIError`: raised if there is an unexpected error in the Contracts Server interaction
-- `MagicAttachTokenError`: raised when an invalid/expired token is sent
+- `MagicAttachTokenError`: raised when an invalid/expired token is sent or if a valid token expires during the wait
 - `MagicAttachUnavailable`: raised if the Magic Attach service is busy or unavailable at the moment
 
 
