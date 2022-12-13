@@ -2,6 +2,5 @@
 Description=Update APT News
 
 [Service]
-Type=oneshot
+Type=exec
 ExecStart=/usr/bin/python3 /usr/lib/ubuntu-advantage/apt_news.py
-TimeoutStartSec=5s
